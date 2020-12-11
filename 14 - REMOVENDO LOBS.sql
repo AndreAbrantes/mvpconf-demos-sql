@@ -1,0 +1,29 @@
+CREATE TABLE Artigo
+(
+	Id INT IDENTITY(1,1) PRIMARY KEY,
+	Nome VARCHAR(100) DEFAULT NEWID(),
+	DataPublicacao DATETIME DEFAULT(GETDATE()),
+	Conteudo VARCHAR(MAX) DEFAULT (REPLICATE('C', 3500))
+)
+GO
+
+CREATE INDEX IDX_Nome ON Artigo(Nome) INCLUDE(Conteudo)
+GO
+
+INSERT INTO Artigo DEFAULT VALUES
+GO 10000
+
+SET STATISTICS IO ON;  
+
+SELECT	Id,
+		Nome
+	FROM Artigo
+	WHERE Nome LIKE '%B'
+
+SET STATISTICS IO OFF;
+
+EXEC sp_tableoption 'Artigo', 'large value types out of row', 1
+GO
+
+ALTER INDEX IDX_Nome ON Artigo REBUILD
+GO
